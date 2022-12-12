@@ -1,0 +1,142 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  adminID     Int      @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  phone       String
+  email       String   @unique
+  password    String
+  gender      String?
+  designation String?
+  role        Role
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Nurse {
+  nurseID     Int          @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  phone       String
+  email       String       @unique
+  password    String
+  gender      String?
+  designation String?
+  role        Role
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  Appointment Appointment?
+}
+
+model Doctor {
+  doctorID    Int          @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  phone       String
+  email       String       @unique
+  password    String
+  gender      String?
+  designation String?
+  role        Role
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  Appointment Appointment?
+  Checkup     Checkup?
+}
+
+model Patient {
+  patientID     Int           @id @default(autoincrement())
+  firstName     String
+  lastName      String
+  gender        Gender
+  dob           DateTime
+  maritalStatus MaritalStatus
+  nationalId    BigInt
+  phone         String
+  email         String?
+  address       String?
+  county        String?
+  estate        String?
+  Vitals        Vitals?
+  Appointment   Appointment?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  Checkup       Checkup?
+}
+
+model Vitals {
+  id          Int      @id @default(autoincrement())
+  patient     Patient  @relation(fields: [patientID], references: [patientID])
+  patientID   Int      @unique
+  bpSystolic  Int
+  bpDiastolic Int
+  temperature Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Appointment {
+  id              Int         @id @default(autoincrement())
+  patientType     PatientType
+  patient         Patient     @relation(fields: [patientID], references: [patientID])
+  patientID       Int         @unique
+  doctor          Doctor      @relation(fields: [doctorID], references: [doctorID])
+  doctorID        Int         @unique
+  nurse           Nurse       @relation(fields: [nurseID], references: [nurseID])
+  nurseID         Int         @unique
+  appointmentdate DateTime
+  appointmentTime DateTime
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model Checkup {
+  id           Int       @id @default(autoincrement())
+  patient      Patient   @relation(fields: [patientID], references: [patientID])
+  patientID    Int       @unique
+  doctor       Doctor    @relation(fields: [doctorID], references: [doctorID])
+  doctorID     Int       @unique
+  symptoms     String?
+  diagnosis    String?
+  advice       String?
+  comment      String?
+  HPI          String?
+  examinations String?
+  checkupDate  DateTime
+  nextVisit    DateTime?
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum PatientType {
+  INPATIENT
+  OUTPATIENT
+}
+
+enum Role {
+  DOCTOR
+  NURSE
+  ADMIN
+}
+
+enum MaritalStatus {
+  SINGLE
+  MARRIED
+  DIVORCED
+  WIDOWED
+}
