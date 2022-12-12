@@ -11,7 +11,7 @@ const prisma = new PrismaClient();
 // ROUTES
 // create new doctor
 app.post("/doctors", async (req: Request, res: Response) => {
-  const result = await prisma.user.create({
+  const result = await prisma.doctor.create({
     data: { ...req.body },
   });
 
@@ -19,7 +19,7 @@ app.post("/doctors", async (req: Request, res: Response) => {
 });
 // create new nurse
 app.post("/nurses", async (req: Request, res: Response) => {
-  const result = await prisma.user.create({
+  const result = await prisma.nurse.create({
     data: { ...req.body },
   });
 
@@ -27,7 +27,7 @@ app.post("/nurses", async (req: Request, res: Response) => {
 });
 // create new admin
 app.post("/admins", async (req: Request, res: Response) => {
-  const result = await prisma.user.create({
+  const result = await prisma.admin.create({
     data: { ...req.body },
   });
 
@@ -36,7 +36,7 @@ app.post("/admins", async (req: Request, res: Response) => {
 // delete a doctor
 app.delete(`/doctor/:id`, async (req: Request, res: Response) => {
   const { id } = req.params;
-  const song = await prisma.user.delete({
+  const song = await prisma.doctor.delete({
     where: { id: Number(id) },
   });
   res.json({
@@ -46,7 +46,7 @@ app.delete(`/doctor/:id`, async (req: Request, res: Response) => {
 });
 // fetch all doctors
 app.get("/doctors", async (req: Request, res: Response) => {
-  const doctors = await prisma.user.findMany();
+  const doctors = await prisma.doctor.findMany();
   res.json({
     success: true,
     payload: doctors,
@@ -55,7 +55,7 @@ app.get("/doctors", async (req: Request, res: Response) => {
 // update doctors
 app.put("/doctor/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
-  const doctor = await prisma.user.update({
+  const doctor = await prisma.doctor.update({
     where: { id: Number(id) },
     data: { ...req.body },
   });
