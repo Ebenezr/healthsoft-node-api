@@ -22,6 +22,7 @@ model Admin {
   role        Role
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  image       String?  @default("https://api.realworld.io/images/smiley-cyrus.jpeg")
 }
 
 model Nurse {
@@ -37,6 +38,7 @@ model Nurse {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   Appointment Appointment?
+  image       String?      @default("https://api.realworld.io/images/smiley-cyrus.jpeg")
 }
 
 model Doctor {
@@ -53,6 +55,7 @@ model Doctor {
   updatedAt   DateTime     @updatedAt
   Appointment Appointment?
   Checkup     Checkup?
+  image       String?      @default("https://api.realworld.io/images/smiley-cyrus.jpeg")
 }
 
 model Patient {
@@ -77,7 +80,7 @@ model Patient {
 
 model Vitals {
   id          Int      @id @default(autoincrement())
-  patient     Patient  @relation(fields: [patientID], references: [id])
+  patient     Patient  @relation(fields: [patientID], references: [id], onDelete: Cascade)
   patientID   Int      @unique
   bpSystolic  Int
   bpDiastolic Int
@@ -89,11 +92,11 @@ model Vitals {
 model Appointment {
   id              Int         @id @default(autoincrement())
   patientType     PatientType
-  patient         Patient     @relation(fields: [patientID], references: [id])
+  patient         Patient     @relation(fields: [patientID], references: [id], onDelete: Cascade)
   patientID       Int         @unique
-  doctor          Doctor      @relation(fields: [doctorID], references: [id])
+  doctor          Doctor      @relation(fields: [doctorID], references: [id], onDelete: Cascade)
   doctorID        Int         @unique
-  nurse           Nurse       @relation(fields: [nurseID], references: [id])
+  nurse           Nurse       @relation(fields: [nurseID], references: [id], onDelete: Cascade)
   nurseID         Int         @unique
   appointmentdate DateTime
   appointmentTime DateTime
@@ -103,9 +106,9 @@ model Appointment {
 
 model Checkup {
   id           Int       @id @default(autoincrement())
-  patient      Patient   @relation(fields: [patientID], references: [id])
+  patient      Patient   @relation(fields: [patientID], references: [id], onDelete: Cascade)
   patientID    Int       @unique
-  doctor       Doctor    @relation(fields: [doctorID], references: [id])
+  doctor       Doctor    @relation(fields: [doctorID], references: [id], onDelete: Cascade)
   doctorID     Int       @unique
   symptoms     String?
   diagnosis    String?
