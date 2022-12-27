@@ -15,7 +15,7 @@ model Admin {
   firstName   String
   lastName    String
   phone       String
-  email       String   @unique
+  email       String
   password    String
   gender      String?
   designation String?
@@ -23,6 +23,9 @@ model Admin {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   image       String?  @default("https://api.realworld.io/images/smiley-cyrus.jpeg")
+
+  @@unique([email])
+  @@index([email])
 }
 
 model Nurse {
@@ -30,7 +33,7 @@ model Nurse {
   firstName   String
   lastName    String
   phone       String
-  email       String       @unique
+  email       String
   password    String
   gender      String?
   designation String?
@@ -39,6 +42,9 @@ model Nurse {
   updatedAt   DateTime     @updatedAt
   Appointment Appointment?
   image       String?      @default("https://api.realworld.io/images/smiley-cyrus.jpeg")
+
+  @@unique([email])
+  @@index([email])
 }
 
 model Doctor {
@@ -46,7 +52,7 @@ model Doctor {
   firstName   String
   lastName    String
   phone       String
-  email       String       @unique
+  email       String
   password    String
   gender      String?
   designation String?
@@ -56,6 +62,9 @@ model Doctor {
   Appointment Appointment?
   Checkup     Checkup?
   image       String?      @default("https://api.realworld.io/images/smiley-cyrus.jpeg")
+
+  @@unique([email])
+  @@index([email])
 }
 
 model Patient {
@@ -76,6 +85,8 @@ model Patient {
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   Checkup       Checkup?
+
+  @@index([email])
 }
 
 model Vitals {
