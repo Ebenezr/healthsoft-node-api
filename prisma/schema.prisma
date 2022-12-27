@@ -19,7 +19,7 @@ model Admin {
   password    String
   gender      String?
   designation String?
-  role        Role
+  role        Role     @default(ADMIN)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   image       String?  @default("https://api.realworld.io/images/smiley-cyrus.jpeg")
@@ -34,7 +34,7 @@ model Nurse {
   password    String
   gender      String?
   designation String?
-  role        Role
+  role        Role         @default(NURSE)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   Appointment Appointment?
@@ -50,7 +50,7 @@ model Doctor {
   password    String
   gender      String?
   designation String?
-  role        Role
+  role        Role         @default(DOCTOR)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   Appointment Appointment?
