@@ -1,25 +1,25 @@
-version: '3.9'
+version: "3.9"
 services:
   postgres:
-    image: postgres:13
+    image: postgres:latest
     container_name: postgres
-    hostname: postgres 
-    restart: unless-stopped
-    environment:
-       POSTGRES_USER: postgres
-       POSTGRES_PASSWORD: postgres
-       POSTGRES_DB: healthsoft_DB
-    volumes:
-      - postgres:/var/lib/postgresql/data
+    hostname: postgres
     ports:
-      - '5432:5432'
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: healthsoft_DB
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
 
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
     depends_on:
       - postgres
-    ports: 
+    ports:
       - "5555:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
@@ -32,14 +32,14 @@ services:
     stdin_open: true
     build:
       context: .
-      dockerfile: dockerfile
-      containter_name: prisma-postgres-api
-      depends_on:
-        - postgres
-      ports:
-        - "3000:3000"
-      restart: always                  
+      dockerfile: Dockerfile
+    container_name: prisma-postgres-api
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
+    restart: always
 
 volumes:
-  postgres-data
-  pgadmin-data
+  postgres-data:
+  pgadmin-data:
