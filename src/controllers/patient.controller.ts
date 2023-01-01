@@ -1,17 +1,16 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { PrismaClient } from "@prisma/client";
 
-
 const prisma = new PrismaClient();
 const router = Router();
 
 // ROUTES
-// create new admin
+// create new patient
 router.post(
-  "/admins",
+  "/patients",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await prisma.admin.create({
+      const result = await prisma.patient.create({
         data: { ...req.body },
       });
 
@@ -22,13 +21,13 @@ router.post(
   }
 );
 
-// delete a admin
+// delete a patient
 router.delete(
-  `/admin/:id`,
+  `/patient/:id`,
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
-      const song = await prisma.admin.delete({
+      const song = await prisma.patient.delete({
         where: { id: Number(id) },
       });
       res.json({
@@ -41,19 +40,19 @@ router.delete(
   }
 );
 
-// update admins
+// update patients
 router.patch(
-  "/admin/:id",
+  "/patient/:id",
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
-      const admin = await prisma.admin.update({
+      const patient = await prisma.patient.update({
         where: { id: Number(id) },
         data: { ...req.body },
       });
       res.json({
         success: true,
-        payload: admin,
+        payload: patient,
       });
     } catch (error) {
       next(error);
@@ -61,15 +60,15 @@ router.patch(
   }
 );
 
-// fetch all admins
+// fetch all patients
 router.get(
-  "/admins",
+  "/patients",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const admins = await prisma.admin.findMany();
+      const patients = await prisma.patient.findMany();
       res.json({
         success: true,
-        payload: admins,
+        payload: patients,
       });
     } catch (error) {
       next(error);
@@ -77,20 +76,20 @@ router.get(
   }
 );
 
-// fetch single admins
+// fetch single patients
 router.get(
-  "/admins/:id",
+  "/patients/:id",
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
-      const admins = await prisma.admin.findUnique({
+      const patients = await prisma.patient.findUnique({
         where: {
           id: Number(id),
         },
       });
       res.json({
         success: true,
-        payload: admins,
+        payload: patients,
       });
     } catch (error) {
       next(error);

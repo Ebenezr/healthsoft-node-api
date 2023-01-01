@@ -1,17 +1,16 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { PrismaClient } from "@prisma/client";
 
-
 const prisma = new PrismaClient();
 const router = Router();
 
 // ROUTES
-// create new admin
+// create new vital
 router.post(
-  "/admins",
+  "/vitals",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await prisma.admin.create({
+      const result = await prisma.vitals.create({
         data: { ...req.body },
       });
 
@@ -22,13 +21,13 @@ router.post(
   }
 );
 
-// delete a admin
+// delete a vital
 router.delete(
-  `/admin/:id`,
+  `/vital/:id`,
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
-      const song = await prisma.admin.delete({
+      const song = await prisma.vitals.delete({
         where: { id: Number(id) },
       });
       res.json({
@@ -41,19 +40,19 @@ router.delete(
   }
 );
 
-// update admins
+// update vitals
 router.patch(
-  "/admin/:id",
+  "/vital/:id",
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
-      const admin = await prisma.admin.update({
+      const vital = await prisma.vitals.update({
         where: { id: Number(id) },
         data: { ...req.body },
       });
       res.json({
         success: true,
-        payload: admin,
+        payload: vital,
       });
     } catch (error) {
       next(error);
@@ -61,15 +60,15 @@ router.patch(
   }
 );
 
-// fetch all admins
+// fetch all vitals
 router.get(
-  "/admins",
+  "/vitals",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const admins = await prisma.admin.findMany();
+      const vitals = await prisma.vitals.findMany();
       res.json({
         success: true,
-        payload: admins,
+        payload: vitals,
       });
     } catch (error) {
       next(error);
@@ -77,20 +76,20 @@ router.get(
   }
 );
 
-// fetch single admins
+// fetch single vitals
 router.get(
-  "/admins/:id",
+  "/vitals/:id",
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
-      const admins = await prisma.admin.findUnique({
+      const vitals = await prisma.vitals.findUnique({
         where: {
           id: Number(id),
         },
       });
       res.json({
         success: true,
-        payload: admins,
+        payload: vitals,
       });
     } catch (error) {
       next(error);

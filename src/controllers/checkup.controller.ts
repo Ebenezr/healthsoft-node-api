@@ -1,17 +1,16 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { PrismaClient } from "@prisma/client";
 
-
 const prisma = new PrismaClient();
 const router = Router();
 
 // ROUTES
-// create new admin
+// create new checkup
 router.post(
-  "/admins",
+  "/checkups",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await prisma.admin.create({
+      const result = await prisma.checkup.create({
         data: { ...req.body },
       });
 
@@ -22,13 +21,13 @@ router.post(
   }
 );
 
-// delete a admin
+// delete a checkup
 router.delete(
-  `/admin/:id`,
+  `/checkup/:id`,
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
-      const song = await prisma.admin.delete({
+      const song = await prisma.checkup.delete({
         where: { id: Number(id) },
       });
       res.json({
@@ -41,19 +40,19 @@ router.delete(
   }
 );
 
-// update admins
+// update checkups
 router.patch(
-  "/admin/:id",
+  "/checkup/:id",
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
-      const admin = await prisma.admin.update({
+      const checkup = await prisma.checkup.update({
         where: { id: Number(id) },
         data: { ...req.body },
       });
       res.json({
         success: true,
-        payload: admin,
+        payload: checkup,
       });
     } catch (error) {
       next(error);
@@ -61,15 +60,15 @@ router.patch(
   }
 );
 
-// fetch all admins
+// fetch all checkups
 router.get(
-  "/admins",
+  "/checkups",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const admins = await prisma.admin.findMany();
+      const checkups = await prisma.checkup.findMany();
       res.json({
         success: true,
-        payload: admins,
+        payload: checkups,
       });
     } catch (error) {
       next(error);
@@ -77,20 +76,20 @@ router.get(
   }
 );
 
-// fetch single admins
+// fetch single checkups
 router.get(
-  "/admins/:id",
+  "/checkups/:id",
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
-      const admins = await prisma.admin.findUnique({
+      const checkups = await prisma.checkup.findUnique({
         where: {
           id: Number(id),
         },
       });
       res.json({
         success: true,
-        payload: admins,
+        payload: checkups,
       });
     } catch (error) {
       next(error);
