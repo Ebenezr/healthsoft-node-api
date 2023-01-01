@@ -1,5 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response, NextFunction } from "express";
+// import routes
+import adminRouter from "./controllers/admin.controller";
+
 const dotenv = require("dotenv");
 const cors = require("cors");
 
@@ -19,11 +22,14 @@ const prisma = new PrismaClient();
 // load enviroment variables
 dotenv.config();
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 app.get("/", (req: Request, res: Response) => {
   res.json({ status: "API is running on /api" });
 });
+
+// routes
+app.use("/api/v1/admin", adminRouter);
 
 app.listen(PORT, () =>
   console.log(`REST API server ready at: http://localhost:${PORT}`)
