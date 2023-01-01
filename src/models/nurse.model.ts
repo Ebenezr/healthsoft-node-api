@@ -1,7 +1,6 @@
 import { Appointment } from "./appointment.model";
-import { Checkup } from "./checkup.model";
 
-export interface Doctor {
+export interface Nurse {
   id: number;
   firstName: string;
   lastName?: string;
@@ -12,7 +11,6 @@ export interface Doctor {
   designation?: string;
   role: string;
   Appointment?: Appointment[];
-  Checkup?: Checkup[];
   image?: string | null;
   createdAt?: Date;
   updatedAt?: Date;
