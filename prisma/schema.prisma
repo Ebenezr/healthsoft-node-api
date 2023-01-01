@@ -129,6 +129,8 @@ model Checkup {
   examinations String?
   checkupDate  DateTime
   nextVisit    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 }
 
 enum Gender {
