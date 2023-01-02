@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { PrismaClient } from "@prisma/client";
-
+const bcrypt = require("bcryptjs");
 
 const prisma = new PrismaClient();
 const router = Router();
@@ -11,8 +11,10 @@ router.post(
   "/admins",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const password = req.body.password;
+      const hashedPassword = await bcrypt.hash(password, 10);
       const result = await prisma.admin.create({
-        data: { ...req.body },
+        data: { ...req.body, password: hashedPassword },
       });
 
       res.json({ success: true, payload: result });
@@ -47,9 +49,11 @@ router.patch(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
+      const password = req.body.password;
+      const hashedPassword = await bcrypt.hash(password, 10);
       const admin = await prisma.admin.update({
         where: { id: Number(id) },
-        data: { ...req.body },
+        data: { ...req.body, password: hashedPassword },
       });
       res.json({
         success: true,

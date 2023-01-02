@@ -6,14 +6,15 @@ const prisma = new PrismaClient();
 const router = Router();
 
 // ROUTES
-// create new doctor
+// create new nurse
 router.post(
-  "/doctors",
+  "/nurses",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const password = req.body.password;
       const hashedPassword = await bcrypt.hash(password, 10);
-      const result = await prisma.doctor.create({
+
+      const result = await prisma.nurse.create({
         data: { ...req.body, password: hashedPassword },
       });
 
@@ -24,13 +25,13 @@ router.post(
   }
 );
 
-// delete a doctor
+// delete a nurse
 router.delete(
-  `/doctor/:id`,
+  `/nurse/:id`,
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
-      const song = await prisma.doctor.delete({
+      const song = await prisma.nurse.delete({
         where: { id: Number(id) },
       });
       res.json({
@@ -43,21 +44,21 @@ router.delete(
   }
 );
 
-// update doctors
+// update nurses
 router.patch(
-  "/doctor/:id",
+  "/nurse/:id",
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
       const password = req.body.password;
       const hashedPassword = await bcrypt.hash(password, 10);
-      const doctor = await prisma.doctor.update({
+      const nurse = await prisma.nurse.update({
         where: { id: Number(id) },
         data: { ...req.body, password: hashedPassword },
       });
       res.json({
         success: true,
-        payload: doctor,
+        payload: nurse,
       });
     } catch (error) {
       next(error);
@@ -65,15 +66,15 @@ router.patch(
   }
 );
 
-// fetch all doctors
+// fetch all nurses
 router.get(
-  "/doctors",
+  "/nurses",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const doctors = await prisma.doctor.findMany();
+      const nurses = await prisma.nurse.findMany();
       res.json({
         success: true,
-        payload: doctors,
+        payload: nurses,
       });
     } catch (error) {
       next(error);
@@ -81,20 +82,20 @@ router.get(
   }
 );
 
-// fetch single doctors
+// fetch single nurses
 router.get(
-  "/doctors/:id",
+  "/nurses/:id",
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
-      const doctors = await prisma.doctor.findUnique({
+      const nurses = await prisma.nurse.findUnique({
         where: {
           id: Number(id),
         },
       });
       res.json({
         success: true,
-        payload: doctors,
+        payload: nurses,
       });
     } catch (error) {
       next(error);
