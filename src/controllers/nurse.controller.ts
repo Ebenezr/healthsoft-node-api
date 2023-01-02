@@ -84,7 +84,7 @@ router.get(
 
 // fetch single nurses
 router.get(
-  "/nurses/:id",
+  "/nurse/:id",
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {

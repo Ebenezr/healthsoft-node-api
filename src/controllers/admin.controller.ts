@@ -83,7 +83,7 @@ router.get(
 
 // fetch single admins
 router.get(
-  "/admins/:id",
+  "/admin/:id",
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {

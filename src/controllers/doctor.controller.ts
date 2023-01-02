@@ -6,6 +6,7 @@ const prisma = new PrismaClient();
 const router = Router();
 
 // ROUTES
+
 // create new doctor
 router.post(
   "/doctors",
@@ -83,7 +84,7 @@ router.get(
 
 // fetch single doctors
 router.get(
-  "/doctors/:id",
+  "/doctor/:id",
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
