@@ -74,7 +74,7 @@ model Patient {
   gender        Gender
   dob           DateTime
   maritalStatus MaritalStatus
-  nationalId    BigInt
+  nationalId    String
   phone         String
   email         String?
   address       String?
