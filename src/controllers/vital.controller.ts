@@ -88,7 +88,14 @@ router.get(
         where: {
           id: Number(id),
         },
-        include: { patient: true },
+        include: {
+          patient: {
+            select: {
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
       });
       res.json({
         success: true,
