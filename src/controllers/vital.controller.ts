@@ -65,7 +65,9 @@ router.get(
   "/vitals",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const vitals = await prisma.vitals.findMany();
+      const vitals = await prisma.vitals.findMany({
+        include: { patient: true },
+      });
       res.json({
         success: true,
         payload: vitals,
@@ -86,6 +88,7 @@ router.get(
         where: {
           id: Number(id),
         },
+        include: { patient: true },
       });
       res.json({
         success: true,

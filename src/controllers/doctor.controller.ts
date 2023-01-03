@@ -72,6 +72,12 @@ router.get(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const doctors = await prisma.doctor.findMany();
+      const doctorWithFullName = doctors.map((doctor) => {
+        return {
+          ...doctors,
+          fullName: `${doctor.firstName} ${doctor.lastName}`,
+        };
+      });
       res.json({
         success: true,
         payload: doctors,
@@ -88,14 +94,23 @@ router.get(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
-      const doctors = await prisma.doctor.findUnique({
+      const doctor = await prisma.doctor.findUnique({
         where: {
           id: Number(id),
         },
       });
+      // create a new doctor object with a fullName field
+      const doctorWithFullName = {
+        ...doctor,
+        fullName: `${doctor?.firstName} ${doctor?.lastName}`,
+      };
+
+      const payload = {
+        patient: doctorWithFullName,
+      };
       res.json({
         success: true,
-        payload: doctors,
+        payload: doctorWithFullName,
       });
     } catch (error) {
       next(error);

@@ -66,9 +66,18 @@ router.get(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const patients = await prisma.patient.findMany();
+      // map over the patients array and create a new array of patient objects
+      // with a fullName field
+      const patientsWithFullName = patients.map((patient) => {
+        return {
+          ...patient,
+          fullName: `${patient.firstName} ${patient.lastName}`,
+        };
+      });
+
       res.json({
         success: true,
-        payload: patients,
+        payload: patientsWithFullName,
       });
     } catch (error) {
       next(error);
@@ -82,14 +91,24 @@ router.get(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
-      const patients = await prisma.patient.findUnique({
+      const patient = await prisma.patient.findUnique({
         where: {
           id: Number(id),
         },
       });
+      // create a new patient object with a fullName field
+      const patientWithFullName = {
+        ...patient,
+        fullName: `${patient?.firstName} ${patient?.lastName}`,
+      };
+      // add the fullName field to the payload object
+      const payload = {
+        patient: patientWithFullName,
+      };
+
       res.json({
         success: true,
-        payload: patients,
+        payload: payload,
       });
     } catch (error) {
       next(error);
