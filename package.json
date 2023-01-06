@@ -31,7 +31,8 @@
     "express-jwt": "^7.7.7",
     "faker": "^6.6.6",
     "jsonwebtoken": "^9.0.0",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "zod": "^3.20.2"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",

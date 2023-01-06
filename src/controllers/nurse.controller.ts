@@ -1,14 +1,31 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { PrismaClient } from "@prisma/client";
+import { AnyZodObject } from "zod";
+import { createUserSchema } from "../schemas/user.schema";
 const bcrypt = require("bcryptjs");
 
 const prisma = new PrismaClient();
 const router = Router();
 
+const validate =
+  (schema: AnyZodObject) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await schema.parseAsync({
+        body: req.body,
+        query: req.query,
+        params: req.params,
+      });
+      return next();
+    } catch (error) {
+      return res.status(400).json(error);
+    }
+  };
 // ROUTES
 // create new nurse
 router.post(
   "/nurses",
+  validate(createUserSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const password = req.body.password;
@@ -91,6 +108,7 @@ router.get(
 // fetch single nurses
 router.get(
   "/nurse/:id",
+
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {

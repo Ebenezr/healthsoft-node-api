@@ -17,7 +17,7 @@ model Admin {
   phone       String
   email       String
   password    String
-  gender      String?
+  gender      Gender
   designation String?
   role        Role     @default(ADMIN)
   createdAt   DateTime @default(now())
@@ -26,60 +26,67 @@ model Admin {
 
   @@unique([email])
   @@index([email])
+  @@map(name: "admins")
 }
 
 model Nurse {
-  id          Int          @id @default(autoincrement())
-  firstName   String
-  lastName    String
-  phone       String
-  email       String
-  password    String
-  gender      String?
-  designation String?
-  role        Role         @default(NURSE)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  Appointment Appointment?
-  image       String?      @default("https://api.realworld.io/images/smiley-cyrus.jpeg")
+  id               Int          @id @default(autoincrement())
+  firstName        String       @db.VarChar(255)
+  lastName         String       @db.VarChar(255)
+  phone            String
+  email            String
+  password         String
+  gender           Gender
+  designation      String?
+  role             Role         @default(NURSE)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  Appointment      Appointment?
+  verified         Boolean?     @default(false)
+  verificationCode String?      @unique @db.Text
+  image            String?      @default("https://api.realworld.io/images/smiley-cyrus.jpeg")
 
-  @@unique([email])
-  @@index([email])
+  @@unique([email, verificationCode])
+  @@index([email, verificationCode])
+  @@map(name: "nurses")
 }
 
 model Doctor {
-  id          Int          @id @default(autoincrement())
-  firstName   String
-  lastName    String
-  phone       String
-  email       String
-  password    String
-  gender      String?
-  designation String?
-  role        Role         @default(DOCTOR)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  Appointment Appointment?
-  Checkup     Checkup?
-  image       String?      @default("https://api.realworld.io/images/smiley-cyrus.jpeg")
+  id               Int          @id @default(autoincrement())
+  firstName        String       @db.VarChar(255)
+  lastName         String       @db.VarChar(255)
+  phone            String
+  email            String
+  password         String
+  gender           Gender
+  designation      String?
+  role             Role         @default(DOCTOR)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  Appointment      Appointment?
+  Checkup          Checkup?
+  verified         Boolean?     @default(false)
+  verificationCode String?      @unique @db.Text
+  image            String?      @default("https://api.realworld.io/images/smiley-cyrus.jpeg")
 
-  @@unique([email])
-  @@index([email])
+  @@unique([email, verificationCode])
+  @@index([email, verificationCode])
+  @@map(name: "doctors")
 }
 
 model Patient {
   id            Int           @id @default(autoincrement())
-  firstName     String
-  lastName      String
+  firstName     String        @db.VarChar(255)
+  lastName      String        @db.VarChar(255)
   gender        Gender
   dob           String
   maritalStatus MaritalStatus
   nationalId    String
   phone         String
   email         String?
-  address       String?
-  county        String?
-  estate        String?
+  address       String?       @db.VarChar(255)
+  county        String?       @db.VarChar(255)
+  estate        String?       @db.VarChar(255)
   Vitals        Vitals?
   Appointment   Appointment?
   createdAt     DateTime      @default(now())
@@ -87,6 +94,7 @@ model Patient {
   Checkup       Checkup?
 
   @@index([email])
+  @@map(name: "patients")
 }
 
 model Vitals {
@@ -96,9 +104,11 @@ model Vitals {
   bpSystolic  Int
   bpDiastolic Int
   temperature Float
-  notes       String?
+  notes       String?  @db.VarChar(255)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@map(name: "vitals")
 }
 
 model Appointment {
@@ -114,6 +124,8 @@ model Appointment {
   appointmentTime DateTime
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
+
+  @@map(name: "appointments")
 }
 
 model Checkup {
@@ -122,16 +134,18 @@ model Checkup {
   patientID    Int       @unique
   doctor       Doctor    @relation(fields: [doctorID], references: [id], onDelete: Cascade)
   doctorID     Int       @unique
-  symptoms     String?
-  diagnosis    String?
-  advice       String?
-  comment      String?
-  HPI          String?
-  examinations String?
+  symptoms     String?   @db.VarChar(255)
+  diagnosis    String?   @db.VarChar(255)
+  advice       String?   @db.VarChar(255)
+  comment      String?   @db.VarChar(255)
+  HPI          String?   @db.VarChar(255)
+  examinations String?   @db.VarChar(255)
   checkupDate  DateTime
   nextVisit    DateTime?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+
+  @@map(name: "checkups")
 }
 
 enum Gender {
