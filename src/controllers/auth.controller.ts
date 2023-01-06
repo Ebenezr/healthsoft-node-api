@@ -1,149 +1,89 @@
-// const express = require("express");
-// const bcrypt = require("bcrypt");
-// const jwt = require("jsonwebtoken");
-// const { v4: uuidv4 } = require("uuid");
+import { NextFunction, Request, Response, Router } from "express";
+import { PrismaClient } from "@prisma/client";
+import { AnyZodObject } from "zod";
+import { createUserSchema, loginUserSchema } from "../schemas/user.schema";
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const prisma = new PrismaClient();
+const router = Router();
 
-// const {
-//   findUserByEmail,
-//   createUserByEmailAndPassword,
-//   findUserById,
-// } = require("../users/users.services");
-// const { generateTokens } = require("../../utils/jwt");
-// const {
-//   addRefreshTokenToWhitelist,
-//   findRefreshTokenById,
-//   deleteRefreshToken,
-//   revokeTokens,
-// } = require("./auth.services");
-// const { hashToken } = require("../../utils/hashToken");
+const validate =
+  (schema: AnyZodObject) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await schema.parseAsync({
+        body: req.body,
+        query: req.query,
+        params: req.params,
+      });
+      return next();
+    } catch (error) {
+      return res.status(400).json(error);
+    }
+  };
 
-// const router = express.Router();
+router.post(
+  "/login",
+  validate(loginUserSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email, password } = req.body;
 
-// router.post("/register", async (req, res, next) => {
-//   try {
-//     const { email, password } = req.body;
-//     if (!email || !password) {
-//       res.status(400);
-//       throw new Error("You must provide an email and a password.");
-//     }
+      // query the appropriate table based on the user's role
+      let user;
+      const admin = await prisma.admin.findUnique({ where: { email } });
+      if (admin) {
+        user = admin;
+      } else {
+        const doctor = await prisma.doctor.findUnique({ where: { email } });
+        if (doctor) {
+          user = doctor;
+        } else {
+          const nurse = await prisma.nurse.findUnique({ where: { email } });
+          if (nurse) {
+            user = nurse;
+          }
+        }
+      }
+      if (!user) {
+        // return an error if
+        return res
+          .status(400)
+          .json({ success: false, error: "Invalid email or password" });
+      }
 
-//     const existingUser = await findUserByEmail(email);
+      //   if (!user) {
+      //     throw new Error("Invalid email or password");
+      //   }
 
-//     if (existingUser) {
-//       res.status(400);
-//       throw new Error("Email already in use.");
-//     }
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      if (!passwordMatch) {
+        return res
+          .status(400)
+          .json({ success: false, error: "Invalid email or password" });
+        // throw new Error("Invalid email or password");
+      }
 
-//     const user = await createUserByEmailAndPassword({ email, password });
-//     const jti = uuidv4();
-//     const { accessToken, refreshToken } = generateTokens(user, jti);
-//     await addRefreshTokenToWhitelist({ jti, refreshToken, userId: user.id });
+      const token = jwt.sign(
+        {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: "7d" }
+      );
 
-//     res.json({
-//       accessToken,
-//       refreshToken,
-//     });
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+      res.json({
+        success: true,
+        token,
+        role: user.role,
+        name: `${user.firstName} ${user.lastName}`,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
-// router.post("/login", async (req, res, next) => {
-//   try {
-//     const { email, password } = req.body;
-//     if (!email || !password) {
-//       res.status(400);
-//       throw new Error("You must provide an email and a password.");
-//     }
-
-//     const existingUser = await findUserByEmail(email);
-
-//     if (!existingUser) {
-//       res.status(403);
-//       throw new Error("Invalid login credentials.");
-//     }
-
-//     const validPassword = await bcrypt.compare(password, existingUser.password);
-//     if (!validPassword) {
-//       res.status(403);
-//       throw new Error("Invalid login credentials.");
-//     }
-
-//     const jti = uuidv4();
-//     const { accessToken, refreshToken } = generateTokens(existingUser, jti);
-//     await addRefreshTokenToWhitelist({
-//       jti,
-//       refreshToken,
-//       userId: existingUser.id,
-//     });
-
-//     res.json({
-//       accessToken,
-//       refreshToken,
-//     });
-//   } catch (err) {
-//     next(err);
-//   }
-// });
-
-// router.post("/refreshToken", async (req, res, next) => {
-//   try {
-//     const { refreshToken } = req.body;
-//     if (!refreshToken) {
-//       res.status(400);
-//       throw new Error("Missing refresh token.");
-//     }
-//     const payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-//     const savedRefreshToken = await findRefreshTokenById(payload.jti);
-
-//     if (!savedRefreshToken || savedRefreshToken.revoked === true) {
-//       res.status(401);
-//       throw new Error("Unauthorized");
-//     }
-
-//     const hashedToken = hashToken(refreshToken);
-//     if (hashedToken !== savedRefreshToken.hashedToken) {
-//       res.status(401);
-//       throw new Error("Unauthorized");
-//     }
-
-//     const user = await findUserById(payload.userId);
-//     if (!user) {
-//       res.status(401);
-//       throw new Error("Unauthorized");
-//     }
-
-//     await deleteRefreshToken(savedRefreshToken.id);
-//     const jti = uuidv4();
-//     const { accessToken, refreshToken: newRefreshToken } = generateTokens(
-//       user,
-//       jti
-//     );
-//     await addRefreshTokenToWhitelist({
-//       jti,
-//       refreshToken: newRefreshToken,
-//       userId: user.id,
-//     });
-
-//     res.json({
-//       accessToken,
-//       refreshToken: newRefreshToken,
-//     });
-//   } catch (err) {
-//     next(err);
-//   }
-// });
-
-// // This endpoint is only for demo purpose.
-// // Move this logic where you need to revoke the tokens( for ex, on password reset)
-// router.post("/revokeRefreshTokens", async (req, res, next) => {
-//   try {
-//     const { userId } = req.body;
-//     await revokeTokens(userId);
-//     res.json({ message: `Tokens revoked for user with id #${userId}` });
-//   } catch (err) {
-//     next(err);
-//   }
-// });
-
-// module.exports = router;
+export default router;

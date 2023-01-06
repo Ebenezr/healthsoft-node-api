@@ -7,7 +7,7 @@ import patientRouter from "./controllers/patient.controller";
 import vitalRouter from "./controllers/vital.controller";
 import checkupRouter from "./controllers/checkup.controller";
 import appointmentRouter from "./controllers/appointment.controller";
-// import authRouter from "./controllers/auth.controller";
+import authRouter from "./controllers/auth.controller";
 
 const dotenv = require("dotenv");
 const cors = require("cors");
@@ -43,7 +43,7 @@ app.use("/api/v1", patientRouter);
 app.use("/api/v1", appointmentRouter);
 app.use("/api/v1", checkupRouter);
 app.use("/api/v1", vitalRouter);
-// app.use("/api/v1", authRouter);
+app.use("/api/v1", authRouter);
 
 app.listen(PORT, () =>
   console.log(`REST API server ready at: http://localhost:${PORT}`)
