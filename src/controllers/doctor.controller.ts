@@ -31,7 +31,7 @@ router.post(
     try {
       // check if there is already an admin with the same email address
 
-      const existingDoctor = await prisma.doctor.findUnique({
+      const existingDoctor = await prisma.admin.findUnique({
         where: { email: req.body.email },
       });
       if (existingDoctor) {
