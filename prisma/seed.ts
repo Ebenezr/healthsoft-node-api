@@ -1,17 +1,19 @@
 const bcrypt = require("bcryptjs");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const faker = require("faker");
+const { faker } = require("@faker-js/faker");
+const _ = require("lodash");
+const uuid = require("uuid");
 
 // generate patient
 function generatePatient() {
   return {
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
-    gender: faker.random.arrayElement(["Male", "Female"]),
+    gender: _.sample(["MALE", "FEMALE", "OTHER"]),
     dob: faker.date.past(50).toISOString(),
-    maritalStatus: faker.random.arrayElement(["Single", "Married", "Divorced"]),
-    nationalId: faker.random.uuid(),
+    maritalStatus: _.sample(["SINGLE", "MARRIED", "DIVORCED", "WIDOWED"]),
+    nationalId: uuid.v4(),
     phone: faker.phone.phoneNumber(),
     email: faker.internet.email(),
     address: faker.address.streetAddress(),
@@ -23,14 +25,31 @@ function generatePatient() {
 // generate vitals
 function generateVitals() {
   return {
-    bpSystolic: faker.random.number({ min: 90, max: 180 }),
-    bpDiastolic: faker.random.number({ min: 60, max: 90 }),
-    temperature: faker.random.number({ min: 95, max: 105 }),
+    bpSystolic: faker.datatype.number({ min: 90, max: 180 }),
+    bpDiastolic: faker.datatype.number({ min: 60, max: 90 }),
+    temperature: faker.datatype.number({ min: 34, max: 37 }),
     notes: faker.lorem.sentence(),
   };
 }
 
-async function seedVitals(numPatients) {
+function generateAppointment() {
+  return {
+    patientType: _.sample(["INPATIENT", "OUTPATIENT"]),
+    appointmentdate: faker.date.future().toISOString(),
+    appointmentTime: faker.date.future().toISOString(),
+  };
+}
+
+async function seedPatients(numPatients: number) {
+  for (let i = 0; i < numPatients; i++) {
+    const patient = generatePatient();
+    await prisma.patient.create({
+      data: patient,
+    });
+    console.log(`Created patient: ${patient.firstName} ${patient.lastName}`);
+  }
+}
+async function seedVitals(numPatients: number) {
   const patients = await prisma.patient.findMany();
   for (let i = 0; i < numPatients; i++) {
     const vitals = generateVitals();
@@ -50,18 +69,35 @@ async function seedVitals(numPatients) {
   }
 }
 
-async function seedPatients(numPatients) {
-  for (let i = 0; i < numPatients; i++) {
-    const patient = generatePatient();
-    await prisma.patient.create({
-      data: patient,
-    });
-    console.log(`Created patient: ${patient.firstName} ${patient.lastName}`);
-  }
-}
-
-async function createAdmin(data) {
-  // function code goes here
+async function createAppointment(
+  patientId: number,
+  doctorId: number,
+  nurseId: number
+) {
+  const appointment = generateAppointment();
+  await prisma.appointment.create({
+    data: {
+      ...appointment,
+      patient: {
+        connect: {
+          id: patientId,
+        },
+      },
+      doctor: {
+        connect: {
+          id: doctorId,
+        },
+      },
+      nurse: {
+        connect: {
+          id: nurseId,
+        },
+      },
+    },
+  });
+  console.log(
+    `Created appointment for patient with ID ${patientId} and doctor with ID ${doctorId}`
+  );
 }
 
 async function seed() {
@@ -70,9 +106,9 @@ async function seed() {
       firstName: "John",
       lastName: "Doe",
       phone: "123-456-7890",
-      email: "admin@admin.com",
-      password: bcrypt.hashSync("admin@admin.com", 8),
-      gender: "Male",
+      email: "admin1@admin.com",
+      password: bcrypt.hashSync("admin1@admin.com", 8),
+      gender: "MALE",
       designation: "CEO",
       role: "ADMIN",
       image: "https://api.realworld.io/images/smiley-cyrus.jpeg",
@@ -86,7 +122,7 @@ async function seed() {
       phone: "123-458-7890",
       email: "emmanuel@doctor.com",
       password: bcrypt.hashSync("emmanuel@doctor.com", 8),
-      gender: "Male",
+      gender: "MALE",
       designation: "Surgion",
       role: "DOCTOR",
       image: "https://api.realworld.io/images/smiley-cyrus.jpeg",
@@ -100,7 +136,7 @@ async function seed() {
       phone: "123-788-7890",
       email: "grace@nurse.com",
       password: bcrypt.hashSync("grace@nurse.com", 8),
-      gender: "Female",
+      gender: "FEMALE",
       designation: "Front Desk",
       role: "NURSE",
       image: "https://api.realworld.io/images/smiley-cyrus.jpeg",
@@ -109,6 +145,7 @@ async function seed() {
 
   await seedPatients(10);
   await seedVitals(10);
+  await createAppointment(1, 5, 5);
 }
 
 seed()
