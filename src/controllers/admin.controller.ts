@@ -1,7 +1,7 @@
-import { CreateUserInput, createUserSchema } from "./../schemas/user.schema";
+import { createUserSchema } from "./../schemas/user.schema";
 import { NextFunction, Request, Response, Router } from "express";
 import { PrismaClient } from "@prisma/client";
-import { z, AnyZodObject } from "zod";
+import { AnyZodObject } from "zod";
 const bcrypt = require("bcryptjs");
 
 const prisma = new PrismaClient();
