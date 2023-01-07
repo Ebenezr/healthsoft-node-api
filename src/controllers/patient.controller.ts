@@ -1,13 +1,31 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { PrismaClient } from "@prisma/client";
+import { AnyZodObject } from "zod";
+import { createPatientSchema } from "../schemas/patient.schema";
 
 const prisma = new PrismaClient();
 const router = Router();
+
+const validate =
+  (schema: AnyZodObject) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await schema.parseAsync({
+        body: req.body,
+        query: req.query,
+        params: req.params,
+      });
+      return next();
+    } catch (error) {
+      return res.status(400).json(error);
+    }
+  };
 
 // ROUTES
 // create new patient
 router.post(
   "/patients",
+  validate(createPatientSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await prisma.patient.create({
