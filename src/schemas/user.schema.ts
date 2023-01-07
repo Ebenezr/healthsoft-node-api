@@ -32,6 +32,7 @@ export const createUserSchema = object({
     //   required_error: "Please confirm your password",
     // }),
     role: z.optional(z.nativeEnum(Role)),
+    gender: z.optional(z.nativeEnum(Gender)),
   }),
   // .refine((data) => data.password === data.passwordConfirm, {
   //     path: ["passwordConfirm"],
