@@ -17,4 +17,4 @@ COPY . .
 
 EXPOSE 5000
 
-CMD ["node", "/app/startup.sh"]
+CMD ["/app/startup.sh"]
