@@ -30,16 +30,16 @@ router.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // check if there is already an admin with the same email address
-      const email = req.body.email;
-      const existingDoctor = await prisma.doctor.findUnique({
-        where: { email: email },
-      });
-      if (existingDoctor) {
-        // return an error if the email is already in use
-        return res
-          .status(400)
-          .json({ success: false, error: "Email already in use" });
-      }
+      // const email = req.body.email;
+      // const existingDoctor = await prisma.doctor.findUnique({
+      //   where: { email: email },
+      // });
+      // if (existingDoctor) {
+      //   // return an error if the email is already in use
+      //   return res
+      //     .status(400)
+      //     .json({ success: false, error: "Email already in use" });
+      // }
       const password = req.body.password;
       const hashedPassword = await bcrypt.hash(password, 10);
       const result = await prisma.doctor.create({
