@@ -13,8 +13,8 @@ CREATE TYPE "MaritalStatus" AS ENUM ('SINGLE', 'MARRIED', 'DIVORCED', 'WIDOWED')
 -- CreateTable
 CREATE TABLE "admins" (
     "id" SERIAL NOT NULL,
-    "firstName" TEXT NOT NULL,
-    "lastName" TEXT NOT NULL,
+    "firstName" VARCHAR(255) NOT NULL,
+    "lastName" VARCHAR(255) NOT NULL,
     "phone" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
@@ -143,6 +143,9 @@ CREATE INDEX "admins_email_idx" ON "admins"("email");
 CREATE UNIQUE INDEX "admins_email_key" ON "admins"("email");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "nurses_email_key" ON "nurses"("email");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "nurses_verificationCode_key" ON "nurses"("verificationCode");
 
 -- CreateIndex
@@ -150,6 +153,9 @@ CREATE INDEX "nurses_email_verificationCode_idx" ON "nurses"("email", "verificat
 
 -- CreateIndex
 CREATE UNIQUE INDEX "nurses_email_verificationCode_key" ON "nurses"("email", "verificationCode");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "doctors_email_key" ON "doctors"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "doctors_verificationCode_key" ON "doctors"("verificationCode");

@@ -29,8 +29,9 @@ router.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // check if there is already an admin with the same email address
-      const existingNurse = await prisma.admin.findUnique({
-        where: { email: req.body.email },
+      const email = req.body.email;
+      const existingNurse = await prisma.nurse.findUniqueOrThrow({
+        where: { email: email },
       });
 
       if (existingNurse) {
