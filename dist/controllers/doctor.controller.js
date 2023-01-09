@@ -33,16 +33,16 @@ const validate = (schema) => (req, res, next) => __awaiter(void 0, void 0, void 
 router.post("/doctors", validate(user_schema_1.createUserSchema), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // check if there is already an admin with the same email address
-        const email = req.body.email;
-        const existingDoctor = yield prisma.doctor.findUnique({
-            where: { email: email },
-        });
-        if (existingDoctor) {
-            // return an error if the email is already in use
-            return res
-                .status(400)
-                .json({ success: false, error: "Email already in use" });
-        }
+        // const email = req.body.email;
+        // const existingDoctor = await prisma.doctor.findUnique({
+        //   where: { email: email },
+        // });
+        // if (existingDoctor) {
+        //   // return an error if the email is already in use
+        //   return res
+        //     .status(400)
+        //     .json({ success: false, error: "Email already in use" });
+        // }
         const password = req.body.password;
         const hashedPassword = yield bcrypt.hash(password, 10);
         const result = yield prisma.doctor.create({
