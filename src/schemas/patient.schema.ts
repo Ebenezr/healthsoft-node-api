@@ -6,11 +6,6 @@ enum Gender {
   OTHER = "OTHER",
 }
 
-// enum PatientType {
-//   INPATIENT = " INPATIENT",
-//   OUTPATIENT = "OUTPATIENT",
-// }
-
 enum MaritalStatus {
   SINGLE = "SINGLE",
   MARRIED = "MARRIED",

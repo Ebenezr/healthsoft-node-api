@@ -9,6 +9,7 @@ import checkupRouter from "./controllers/checkup.controller";
 import appointmentRouter from "./controllers/appointment.controller";
 import authRouter from "./controllers/auth.controller";
 
+const responseTime = require("response-time");
 const dotenv = require("dotenv");
 const cors = require("cors");
 
@@ -16,6 +17,7 @@ const cors = require("cors");
 
 const express = require("express");
 const app = express();
+app.use(responseTime());
 // setup cors
 app.use(
   cors({
