@@ -28,16 +28,9 @@ export const createUserSchema = object({
     })
       .min(6, "Password must be more than 6 characters")
       .max(32, "Password must be less than 32 characters"),
-    // passwordConfirm: string({
-    //   required_error: "Please confirm your password",
-    // }),
     role: z.optional(z.nativeEnum(Role)),
     gender: z.optional(z.nativeEnum(Gender)),
   }),
-  // .refine((data) => data.password === data.passwordConfirm, {
-  //     path: ["passwordConfirm"],
-  //     message: "Passwords do not match",
-  //   }),
 });
 
 export const loginUserSchema = object({
