@@ -38,14 +38,14 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 // routes
-app.use("/api/v1", adminRouter);
-app.use("/api/v1", doctorRouter);
-app.use("/api/v1", nurseRouter);
-app.use("/api/v1", patientRouter);
-app.use("/api/v1", appointmentRouter);
-app.use("/api/v1", checkupRouter);
-app.use("/api/v1", vitalRouter);
-app.use("/api/v1", authRouter);
+app.use("/api", adminRouter);
+app.use("/api", doctorRouter);
+app.use("/api", nurseRouter);
+app.use("/api", patientRouter);
+app.use("/api", appointmentRouter);
+app.use("/api", checkupRouter);
+app.use("/api", vitalRouter);
+app.use("/api", authRouter);
 
 app.listen(PORT, () =>
   console.log(`REST API server ready at: http://localhost:${PORT}`)
