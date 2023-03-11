@@ -1,20 +1,34 @@
-FROM node:19-alpine
+FROM node:latest AS development
 
-# switch to node user
-# USER node
+WORKDIR /usr/src/app
 
-WORKDIR /app
-# set ownership and permissions
-# RUN chown -R node:node /app
+COPY package.json yarn.lock ./
 
-COPY package*.json ./
-
-RUN npm install
-
-COPY prisma ./prisma/
+# Install Node dependencies
+RUN yarn install  --only=development
 
 COPY . .
 
+RUN yarn build
+
+
+FROM node:latest AS production
+
+WORKDIR /usr/src/app
+
+COPY package.json yarn.lock ./
+
+RUN yarn install --only=production
+
+
+
+COPY . .
+COPY --from=development /usr/src/app/prisma ./prisma
+COPY --from=development /usr/src/app/dist ./dist
+
+# LABEL "Ebenezar Blind <ebenezarbukosia@gmail.com>" \
+#     Description="Lightweight container with Node 19 based on Alpine Linux"
+
 EXPOSE 5000
 
-CMD ["/app/startup.sh"]
+CMD npm run start:prod

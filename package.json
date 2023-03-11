@@ -4,11 +4,12 @@
   "description": "nodejs server",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node src/index.ts",
-    "build": "tsc",
+    "dev": "nodemon --config nodemon.json src/index.ts",
     "prisma": "prisma",
-    "dev": "nodemon --config nodemon.json src/index.ts"
+    "build": "tsc",
+    "prisma:migrate": "npx prisma migrate dev --name init && yarn seed ",
+    "start": "yarn build && node dist/index.js",
+    "seed": "ts-node ./prisma/seed.ts --accept-data-loss"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

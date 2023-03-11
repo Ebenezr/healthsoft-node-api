@@ -1,4 +1,8 @@
+build
+dist
+coverage
 node_modules
-# Keep environment variables out of version control
-
-data.txt
+.vscode
+.git
+.env
+.env.dist
